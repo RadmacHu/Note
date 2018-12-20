@@ -305,6 +305,21 @@ BtnOne为控件。
 
 
 
+或者是
+
+```C++
+if (BtnOne != nullptr)
+	{
+		FScriptDelegate Del;
+		Del.BindUFunction(this, "OnBtnChangeImgClick");
+		BtnOne->OnClicked.Add(Del);
+	}
+```
+
+
+
+
+
 > 额外参考:
 >
 > [UE4/CPP C++绑定UMG中的按钮事件](https://blog.csdn.net/I_itaiit/article/details/80344864)
@@ -462,6 +477,37 @@ void SetTimer
 # 移动组件 Pawn Movement Components
 
 **Pawn Movement Components（Pawn移动组件）** 有一些强劲的、内置的功能可用于辅助常见的物理功能，同时还是一个在许多 **Pawn** 类型间共享移动代码的好方法。 随着您的项目变得越来越大， **Pawns** 变得越来越复杂，使用 **Components（组件）** 来隔离功能是一个很好的方法。
+
+
+
+# GameMode 创建**Widgets**
+
+[Link](https://api.unrealengine.com/CHN/Programming/Tutorials/UMG/2/index.html)
+
+```c++
+void AHowTo_UMGGameMode::ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass)
+{
+    if (CurrentWidget != nullptr)
+    {
+        CurrentWidget->RemoveFromViewport();
+        CurrentWidget = nullptr;
+    }
+    if (NewWidgetClass != nullptr)
+    {
+        CurrentWidget = CreateWidget<UUserWidget>(GetWorld(), NewWidgetClass);
+        if (CurrentWidget != nullptr)
+        {
+            CurrentWidget->AddToViewport();
+        }
+    }
+}
+```
+
+
+
+> 这个代码将会创建我们提供的任意 **Widgets（控件）** 的实例，并将其放置于屏幕上。 它也可以用来移除实例，所以即使 **Unreal Engine（虚幻引擎）** 可以同时处理许多 **Widgets（控件）** 的显示和互动，一次也只能激活一个实例。 我们不需要直接销毁 **Widgets（控件）** ，因为将其从视口中移除并清除（或者变更）引用它的所有变量将会导致其被 **Unreal Engine's（虚幻引擎的）** 垃圾收集系统清除。
+
+
 
 
 
