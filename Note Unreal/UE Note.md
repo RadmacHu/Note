@@ -73,7 +73,7 @@ void AMyActor::Tick(float DeltaTime)
 
 1. 文件头的注释可以通过项目设置中的描述进行修改。
 
-![1545016472283](E:\Note\uenotepic\1545016472283.png)
+![1545016472283](.\uenotepic\1545016472283.png)
 
 可在项目描述中的 Legal > Copyright 中进行修改。
 
@@ -414,7 +414,7 @@ Source：代码文件。
 
 1. 设置按键
 
-![1545119180169](E:\Note\uenotepic\1545119180169.png)
+![1545119180169](.\uenotepic\1545119180169.png)
 
 
 
