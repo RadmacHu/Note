@@ -1,6 +1,5 @@
 # UE Beginner Note
 
-------
 
 ## First Cpp Files
 
@@ -78,7 +77,7 @@ void AMyActor::Tick(float DeltaTime)
 
 可在项目描述中的 Legal > Copyright 中进行修改。
 
-------
+
 
 ## Remove Class
 
@@ -88,13 +87,13 @@ void AMyActor::Tick(float DeltaTime)
 2. 删除需要对应的.cpp和.h文件。
 3. 前往项目的根目录，右键.uproject文件，重新生成VS Files。
 
-------
+
 
 ## 预处理宏#pragma once
 
 用于防止头文件多次include
 
-------
+
 
 ## Unreal Macros【预处理宏】
 
@@ -110,7 +109,7 @@ void AMyActor::Tick(float DeltaTime)
 
 
 
-------
+
 
 ### UCLASS()
 
@@ -130,7 +129,7 @@ Note that a UObject class can also include native-only properties that do not ex
 
 ## Output Log
 
--------
+
 
 > [Link](https://www.cnblogs.com/blueroses/p/6037981.html)
 
@@ -238,7 +237,6 @@ UE_LOG(YourLog,Error,TEXT("This is red text!"));
 
 
 
-------
 
 # AActor
 
@@ -264,7 +262,7 @@ bool SetActorLocation
 
 
 
-------
+
 
 # FObjectInitializer
 
@@ -276,7 +274,7 @@ Create a component or subobject。
 
 
 
-------
+
 
 # 静态加载和动态加载
 
@@ -286,7 +284,7 @@ Create a component or subobject。
 
 
 
-------
+
 
 # UMG 
 
@@ -322,7 +320,7 @@ BtnOne为控件。
 
 
 
-------
+
 
 # 退出游戏
 
@@ -372,7 +370,7 @@ Source：代码文件。
 
 
 
-------
+
 
 # UE4 文件配置
 
@@ -384,7 +382,7 @@ Source：代码文件。
 
 
 
-------
+
 
 # ModuleRules
 
@@ -400,7 +398,7 @@ Source：代码文件。
 
 
 
-------
+
 
 # FMath::Clamp
 
