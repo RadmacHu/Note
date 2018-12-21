@@ -100,7 +100,7 @@ void AMyActor::Tick(float DeltaTime)
 
 |  Unreal Macros   | Desc                                                         |
 | :--------------: | :----------------------------------------------------------- |
-|      UCLASS      | [Link][https://docs.unrealengine.com/Programming/UnrealArchitecture/Objects] |
+|      UCLASS      | [Link](https://docs.unrealengine.com/Programming/UnrealArchitecture/Objects) |
 | GENERATED_BODY() |                                                              |
 |      TEXT()      | In general, you should be using the **TEXT()** macro when setting string variable literals. If you do not specify the TEXT() macro, your literal will be encoded using ANSI, which is highly limited in what characters it supports. Any ANSI literals being passed into FString need to undergo a conversion to TCHAR (native Unicode encoding), so it is more efficient to use TEXT().<br /><br />[More About](https://docs.unrealengine.com/en-us/Programming/UnrealArchitecture/StringHandling) |
 |   UPROPERTY()    | **UPROPERTY** 宏使得变量对 **虚幻引擎** 可见。 这样，当我们启动游戏或在之后的工作部分重新载入关卡或项目时，这些变量中设置的值将不会被重置。 我们还添加了 **EditAnywhere** 关键帧，这让我们可以在 **虚幻编辑器** 中设置<br /><br /><br />[More About 1](https://blog.csdn.net/u012793104/article/details/78480085)<br />[More About 2](https://wiki.unrealengine.com/UPROPERTY)<br /> |
@@ -358,14 +358,6 @@ Source：代码文件。
 
 
 
-# FMath::Clamp
-
-限制数值范围。
-
-
-
-
-
 # 输入绑定
 
 
@@ -611,4 +603,9 @@ bool SetActorLocation
 Create a component or subobject。
 
 
+### FMath
+
+#### FMath::Clamp
+
+限制数值范围。
 

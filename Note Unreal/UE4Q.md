@@ -33,3 +33,21 @@
 
 
 
+
+
+# Script相关
+
+
+
+## 构造函数和BeginPlay中设置参数
+
+设置参数的代码如下：
+
+```C++
+PickupBox->SetGenerateOverlapEvents(true);	
+PickupBox->OnComponentBeginOverlap.AddDynamic(this, &APickup::OnBoxOverlapBegin);
+PickupBox->SetWorldScale3D(FVector(2.0f, 2.0f, 2.0f));
+```
+
+放在构造函数里面似乎设置无效。需要放在BeginPlay函数里面。（Unreal版本4.2）
+
