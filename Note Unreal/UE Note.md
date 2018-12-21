@@ -76,7 +76,7 @@ void AMyActor::Tick(float DeltaTime)
 
 1. 文件头的注释可以通过项目设置中的描述进行修改。
 
-![1545016472283](.\uenotepic\1545016472283.png)
+![1545016472283](.\UE Note.assets\.%5Cuenotepic%5C1545016472283.png)
 
 可在项目描述中的 Legal > Copyright 中进行修改。
 
