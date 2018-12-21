@@ -74,11 +74,9 @@ void AMyActor::Tick(float DeltaTime)
 
 ### .h 和 .cpp 首行注释修改
 
-1. 文件头的注释可以通过项目设置中的描述进行修改。
-
 ![1545016472283](.\UE Note.assets\.%5Cuenotepic%5C1545016472283.png)
 
-可在项目描述中的 Legal > Copyright 中进行修改。
+可在项目描述中的 Legal > Copyright 中进行修改头文件的注释。
 
 
 
@@ -122,11 +120,9 @@ void AMyActor::Tick(float DeltaTime)
 
 
 
-## Output Log
+## 日志输出
 
-
-
-> [Link](https://www.cnblogs.com/blueroses/p/6037981.html)
+> [出处Link](https://www.cnblogs.com/blueroses/p/6037981.html)
 
 快速使用 :
 
@@ -216,54 +212,6 @@ UE_LOG(YourLog,Warning,TEXT("MyCharacter's FName is %s"),
 UE_LOG(YourLog,Warning,TEXT("%s has health %d, which is %f percent of total health"),
     *MyCharacter->GetName(), MyCharacter->Health, MyCharacter->HealthPercent);
 ```
-
-### Log的颜色：
-
-```C++
-//"this is Grey Text"
-UE_LOG(YourLog,Log,TEXT("This is grey text!"));
-//"this is Yellow Text"
-UE_LOG(YourLog,Warning,TEXT("This is yellow text!"));
-//"This is Red Text"
-UE_LOG(YourLog,Error,TEXT("This is red text!"));
-```
-
-可以看得出第二个参数是是用来控制颜色的。
-
-
-
-
-# AActor
-
-## AActor::GetActorLocation
-
->  Returns the location of the RootComponent of this Actor
-
-## AActor::SetActorLocation
-
-> Move the actor instantly to the specified location.
->
-> Whether the location was successfully set if not swept, or whether movement occurred if swept.
-
-```c++
-bool SetActorLocation
-(
-    const FVector & NewLocation,
-    bool bSweep,
-    FHitResult * OutSweepHitResult,
-    ETeleportType Teleport
-)
-```
-
-
-
-
-
-# FObjectInitializer
-
-## FObjectInitializer::CreateDefaultSubobject
-
-Create a component or subobject。
 
 
 
@@ -517,6 +465,8 @@ void AHowTo_UMGGameMode::ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClas
 
 
 
+## GameplayStatics
+
 ### GameplayStatics.h
 
 ```C++
@@ -549,7 +499,7 @@ Remarks :
 
 
 
-
+## PlayerController
 
 ### PlayerController.h
 
@@ -621,3 +571,44 @@ virtual FVector ConsumeInputVector()
 Remarks :
 
 > Returns the pending input vector and resets it to zero. This should be used during a movement update (by the Pawn or PawnMovementComponent) to prevent accumulation of control input between frames. Copies the pending input vector to the saved input vector (GetLastMovementInputVector()).
+
+
+
+
+
+### AActor
+
+
+
+#### AActor::GetActorLocation
+
+> Returns the location of the RootComponent of this Actor
+
+#### AActor::SetActorLocation
+
+> Move the actor instantly to the specified location.
+>
+> Whether the location was successfully set if not swept, or whether movement occurred if swept.
+
+```c++
+bool SetActorLocation
+(
+    const FVector & NewLocation,
+    bool bSweep,
+    FHitResult * OutSweepHitResult,
+    ETeleportType Teleport
+)
+```
+
+
+
+
+
+### FObjectInitializer
+
+#### FObjectInitializer::CreateDefaultSubobject
+
+Create a component or subobject。
+
+
+
