@@ -568,7 +568,7 @@ Remarks :
 
 
 
-### AActor
+### AActor类
 
 
 
@@ -596,16 +596,28 @@ bool SetActorLocation
 
 
 
-### FObjectInitializer
+### FObjectInitializer类
 
 #### FObjectInitializer::CreateDefaultSubobject
 
 Create a component or subobject。
 
 
-### FMath
+
+
+### FMath类
 
 #### FMath::Clamp
 
 限制数值范围。
+
+
+
+### UWorld类
+
+
+
+UWorld::SpawnActor()
+
+
 
