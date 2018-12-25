@@ -101,9 +101,9 @@ void AMyActor::Tick(float DeltaTime)
 |  Unreal Macros   | Desc                                                         |
 | :--------------: | :----------------------------------------------------------- |
 |      UCLASS      | [Link](https://docs.unrealengine.com/Programming/UnrealArchitecture/Objects) |
-| GENERATED_BODY() |                                                              |
+| GENERATED_BODY() | This is a macro that must be placed at the very beginning of the class body. When compiling, Unreal will replace it with all the boilerplate code that is necessary. This means that, right before compile time, GENERATED_BODY() is replaced by the actual code. Since this chunk of code is required to compile the class, Epic has made it easier for us by creating this macro. |
 |      TEXT()      | In general, you should be using the **TEXT()** macro when setting string variable literals. If you do not specify the TEXT() macro, your literal will be encoded using ANSI, which is highly limited in what characters it supports. Any ANSI literals being passed into FString need to undergo a conversion to TCHAR (native Unicode encoding), so it is more efficient to use TEXT().<br /><br />[More About](https://docs.unrealengine.com/en-us/Programming/UnrealArchitecture/StringHandling) |
-|   UPROPERTY()    | **UPROPERTY** 宏使得变量对 **虚幻引擎** 可见。 这样，当我们启动游戏或在之后的工作部分重新载入关卡或项目时，这些变量中设置的值将不会被重置。 我们还添加了 **EditAnywhere** 关键帧，这让我们可以在 **虚幻编辑器** 中设置<br /><br /><br />[More About 1](https://blog.csdn.net/u012793104/article/details/78480085)<br />[More About 2](https://wiki.unrealengine.com/UPROPERTY)<br /> |
+|   UPROPERTY()    | **UPROPERTY** 宏使得变量对 **虚幻引擎** 可见。 这样，当我们启动游戏或在之后的工作部分重新载入关卡或项目时，这些变量中设置的值将不会被重置。 我们还添加了 **EditAnywhere** 关键帧，这让我们可以在 **虚幻编辑器** 中设置。<br /><br />This defines the property metadata and specifiers. These are used on properties to serialize, replicate, and expose them to Blueprints. There are a number of UPROPERTY () specifiers that you can use. To see the full list, visit this [Link](https://docs.unrealengine.com/latest/INT/ Programming/UnrealArchitecture/Reference/Properties/Specifiers/ index.html).<br /><br />[More About 1](https://blog.csdn.net/u012793104/article/details/78480085)<br />[More About 2](https://wiki.unrealengine.com/UPROPERTY)<br /> |
 |   UFUNCTION()    | 将此函数以如下方式设为一个 **UFUNCTION**，即可将其对 **虚幻引擎**公开。 |
 
 
@@ -352,6 +352,71 @@ Source：代码文件。
 
 
 
+# Instantiate UObject
+
+创建时候不应该直接使用C++的new进行创建。
+
+创建Actor使用 UWorld::SpawnActor<>() 。
+
+创建非UObject并且不是Actor的派生类用ConstructObject<>()或者是NewObject<>()进行创建。
+
+
+
+```c++
+UProfile * object = NewObject<UProfile>( GetTransientPackage(), uclassReference );
+```
+
+
+
+# 创建USTRUCT
+
+
+
+```c++
+USTRUCT()
+struct FColoredTexture {
+	GENERATED_USTRUCT_BODY() 
+public:
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = HUD )
+	UTexture* Texture;
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = HUD )
+	FLinearColor Color; 
+};
+```
+
+**注意：结构体命名以F开头**
+
+
+
+# 创建UENUM
+
+
+
+```c++
+UENUM()
+enum Status
+{
+    Idle,
+	Walk UMETA(DisplayName = "Walking"),
+    Run,
+}
+```
+
+可用 **UMETA(DisplayName = "Walking")**进行修改UE中的显示显示。
+
+
+
+# 创建UFUNCTION
+
+在函数方法前面加UFUNCTION宏
+
+```c++
+UFUNCTION()
+void OnHit(
+    UPrimitiveComponent* HitComp, AActor* OtherActor,
+    UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+```
+
 
 
 
@@ -381,7 +446,7 @@ PlayerInputComponent->BindAction("Action00", IE_Pressed,this, &AFirstPawn::Start
 
 
 
-# 计时器的使用
+# timer计时器的使用
 
 
 
@@ -391,24 +456,51 @@ PlayerInputComponent->BindAction("Action00", IE_Pressed,this, &AFirstPawn::Start
 #include "TimerManager.h"
 ```
 
-### FTimerManager::SetTimer
+### FTimerManager::Set Timer
+
+[Link SetTimer](http://api.unrealengine.com/INT/API/Runtime/Engine/FTimerManager/SetTimer/index.html)
+
+> 可以通过GetWorldTimerManager()获取FTimerManager类
+
+```c++
+
+
+if(!GetWorldTimerManager().IsTimerActive(MagicTimerHandle))
+{
+    GetWorldTimerManager().
+    SetTimer(MagicTimerHandle, this,&AUMG_TEST_00Character::UpdateMagic, 5.0f, false );
+}
 
 
 
-```C++
-void SetTimer
-(
-    FTimerHandle & InOutHandle,
-    TFunction < void(void)> && Callback,
-    float InRate,
-    bool InbLoop,
-    float InFirstDelay
-)
+// MagicTimerHandle 为 FTimerHandle类型的句柄
 ```
 
 
 
-> 可以通过GetWorldTimerManager()获取FTimerManager类
+> 清除计时
+
+```c++
+GetWorldTimerManager().ClearTimer(MagicTimerHandle);
+```
+
+
+
+# Unreal callback 回调函数
+
+[Link](https://stonelzp.github.io/2018/07/31/UE4%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%9B%9E%E8%B0%83%E5%AE%9E%E7%8E%B0/)
+
+
+
+
+
+# 手动调用GC
+
+Simply call ConditionalBeginDestroy() on all UObjects that you want deallocated from memory, or set their reference counts to 0.
+
+```c++
+GetWorld()->ForceGarbageCollection(true)
+```
 
 
 
