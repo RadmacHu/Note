@@ -215,7 +215,17 @@ UE_LOG(YourLog,Warning,TEXT("%s has health %d, which is %f percent of total heal
 
 
 
+# 输出日志到屏幕上
 
+
+
+```c++
+GEngine->
+    AddOnScreenDebugMessage(-1, 1, FColor::Red,
+	FString::Printf(TEXT("%s entered me"), *(OtherActor->GetName())));
+```
+
+> The first argument of -1 tells the engine that duplicate strings are allowed, the second parameter is the length of time the message should be displayed for in seconds, the third argument is the color, and the fourth is the actual string to print itself.
 
 
 

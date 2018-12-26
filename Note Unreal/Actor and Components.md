@@ -96,4 +96,3 @@ BoxTwo->SetupAttachment(ChildSceneComponent);
 
 
 > Primitive components are the most complex type of Actor Component because **they not only have a transform, but are also rendered on screen**
-
