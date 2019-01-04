@@ -553,6 +553,18 @@ void AHowTo_UMGGameMode::ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClas
 
 
 
+# 场景过渡
+
+
+
+```c++
+UGameplayStatics::LoadStreamLevel(GetWorld(), *MapName, false, false, info);
+```
+
+
+
+
+
 
 
 # Header And Class
