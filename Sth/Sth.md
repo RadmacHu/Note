@@ -12,3 +12,13 @@ http://blogs.shephertz.com/2013/04/30/make-real-time-multiplayer-games-using-uni
 
 [WebSocket、Socket、TCP、HTTP区别]
 https://www.cnblogs.com/jiangzhaowei/p/8781635.html
+
+
+
+
+
+<https://gameinstitute.qq.com/community/detail/120934>
+
+<https://blog.csdn.net/lkysyzxz/article/details/53335940>
+
+http://gad.qq.com/lore/detail/10249
