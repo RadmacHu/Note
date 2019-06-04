@@ -22,3 +22,9 @@ https://www.cnblogs.com/jiangzhaowei/p/8781635.html
 <https://blog.csdn.net/lkysyzxz/article/details/53335940>
 
 http://gad.qq.com/lore/detail/10249
+
+csharp_networkingprogramming
+
+TCPIP Sockets in CSharp- Practical Guide for Programmers
+
+Wrox. Professional.NET.Network.Programming. fly.
