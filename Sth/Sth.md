@@ -28,3 +28,5 @@ csharp_networkingprogramming
 TCPIP Sockets in CSharp- Practical Guide for Programmers
 
 Wrox. Professional.NET.Network.Programming. fly.
+
+https://blog.csdn.net/luzhensmart/article/details/82353445
