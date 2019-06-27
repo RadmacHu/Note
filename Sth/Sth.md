@@ -34,3 +34,10 @@ https://blog.csdn.net/luzhensmart/article/details/82353445
 https://blog.csdn.net/freeking101/article/details/78922846
 
 https://blog.csdn.net/qq513036862/article/details/53640317
+
+[优化]
+https://www.cnblogs.com/SChivas/p/7898166.html
+
+
+[CPP CONST KEYWORD]
+https://www.cnblogs.com/meteoric_cry/p/4935472.html

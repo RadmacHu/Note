@@ -1,2 +1,19 @@
-MO MOG
+Socket.BeginAccept 开始一个异步操作来接受一个传入的连接尝试
+Socket.BeginConnect 开始一个对远程主机连接的异步请求
+Socket.BeginDisconnect 开始异步请求从远程终结点断开连接
 
+Socket.EndAccept 异步接受传入的连接尝试
+Socket.EndConnect 结束挂起的异步连接请求
+Socket.EndDisconnect 结束挂起的异步断开连接请求
+
+Socket.BeginReceive 开始从连接的Socket中异步接收数据
+Socket.BeginReceiveFrom 开始从指定网络设备中异步接收数据
+Socket.BeginReceiveMessageFrom 开始使用指定的SocketFlags将指定字节数的数据异步接收到数据缓冲区的指定位置，然后存储终结点和数据包信息
+
+Socket.EndReceive 结束挂起的异步读取
+Socket.EndReceiveFrom 结束挂起的、从特定终结点进行异步读取
+Socket.EndReceiveMessageFrom 结束挂起的、从特定终结点进行异步读取。此方法还显示有关数据包而不是 EndReceiveFrom 的更多信息
+
+Socket.BeginSend 将数据异步发送到连接的Socket
+Socket.BeginSendFile 将文件异步发送到连接的Socket对象
+Socket.BeginSendTo 向特定远程主机异步发送数据  
