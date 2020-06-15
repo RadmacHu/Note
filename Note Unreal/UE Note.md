@@ -742,3 +742,4 @@ UWorld::SpawnActor()
 Break Point Compare
 
 wcscmp((wchar_t*)MyString.Data.AllocatorInstance.Data,L"MyText") == 0
+
