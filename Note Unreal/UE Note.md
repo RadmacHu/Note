@@ -741,5 +741,10 @@ UWorld::SpawnActor()
 
 Break Point Compare
 
-wcscmp((wchar_t*)MyString.Data.AllocatorInstance.Data,L"MyText") == 0
+wcscmp((wchar_t*)MyString.Data.AllocatorInstance.Data,L"ABP_ShooterAIControllerBase_C") == 0
+wcscmp((wchar_t*)Name.Data.AllocatorInstance.Data,L"ABP_ShooterAIControllerBase_C") == 0
 
+
+### Profile
+
+http://www.v5xy.com/?p=990
