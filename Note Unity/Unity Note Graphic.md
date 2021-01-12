@@ -1,6 +1,6 @@
-#### Unity中Shader
+## Unity中Shader
 
-##### Unity Shader 类型
+### Unity Shader 类型
 
 + Standard Surface Shader
 + Unlit Shader
@@ -19,7 +19,7 @@
 
 
 
-##### Unity Shader 基本格式
+### Unity Shader 基本格式
 
 ```
 Shader "ShaderName"
@@ -43,7 +43,7 @@ Shader "ShaderName"
 
 
 
-##### Properties 属性块
+#### Properties 属性块
 
 ```
 Properties
@@ -56,7 +56,7 @@ Properties
 
 
 
-###### Properties 属性基本类型
+##### Properties 属性基本类型
 
 | 属性类型 |       默认值的定义语法        | 例 子                                    |
 | :------: | :---------------------------: | :--------------------------------------- |
@@ -71,7 +71,7 @@ Properties
 
 
 
-##### SubShader 块
+#### Subshader 块
 
 ```
 SubShader {
@@ -89,7 +89,7 @@ SubShader {
 
 
 
-###### RenderSetup 渲染状态设置
+#### RenderSetup 渲染状态设置
 
 | 状态名称 |                          设置指令                           |                 解释                  |
 | :------- | :---------------------------------------------------------: | :-----------------------------------: |
@@ -102,7 +102,7 @@ SubShader {
 
 
 
-###### Tags 标签
+#### Tags 标签
 
  ```
 // Tags 格式
@@ -129,7 +129,7 @@ SubShader 的标签类型
 
 
 
-##### Pass 语义块
+#### Pass 语义块
 
 ```
 Pass
@@ -142,7 +142,7 @@ Pass
 
 
 
-###### Pass 名称
+##### Pass 名称
 
 ```
 // 定义名字
@@ -157,7 +157,7 @@ UsePass "MyShader/OTHERPASSNAME"
 
 
 
-###### Pass 标签
+##### Pass 标签
 
 | 标签类型       | 说明 | 例子 |
 | -------------- | ---- | ---- |
@@ -173,7 +173,7 @@ UsePass "MyShader/OTHERPASSNAME"
 
 
 
-##### Fallback
+#### Fallback
 
 ```
 Fallback "name"
@@ -185,7 +185,7 @@ Fallback Off
 
 
 
-##### 表面着色器
+### 表面着色器
 
 ```
 Shader "Custom/stander_surface_shader"
@@ -214,7 +214,7 @@ Shader "Custom/stander_surface_shader"
 
 
 
-##### 顶点/片元着色器
+### 顶点/片元着色器
 
 ```
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
@@ -247,7 +247,7 @@ Shader "Custom/simple_vertexfragment_shader"
 
 
 
-#### 矩阵 Matrix
+### 矩阵 Matrix
 
 
 
@@ -263,7 +263,7 @@ $$
 $$
 
 
-$$m_{ij} ​$$为这个元素在 M 的第i行、第j行。
+$$m_{ij} $$为这个元素在 M 的第i行、第j行。
 $$
 M = \left[
 \begin{matrix}
@@ -271,13 +271,1002 @@ m_{11} & m_{12} & m_{13} \\
 m_{21} & m_{22} & m_{23} \\
 m_{31} & m_{32} & m_{33} \\
 \end{matrix} 
-\right]
+\right]w
 $$
-
 
 --- 待补充
 
 
+
+#### 矩阵几何意义:变换
+
+##### 齐次坐标
+
+> 齐次坐标 => 笛卡尔
+> $$
+> (x , y , w) <=> (\frac{x}{w} , \frac{y}{w})
+> $$
+>
+
+
+
+##### 分解基础变换矩阵
+
+可以使用一个$$4\times 4$$的矩阵来表示平移、旋转和缩放。
+
+纯平移、纯旋转、纯放缩的变换矩阵称为基础变换矩阵。共同点可以分解为4部分。
+$$
+\left[
+\begin{matrix}
+	M_{3\times3} & t_{3\times1} \\
+    0_{1 \times3} & 1
+\end{matrix}
+\right]
+$$
+
+
+> $$ M_{3\times3}​$$用于表示放缩和旋转。
+> $$t_{3\times1}​$$用于表示平移。
+> $$0_{1\times3}​$$是零矩阵。
+
+
+
+##### 平移矩阵
+
+为点 (x , y , z) 在空间中平移了 ($$t_x$$ , $$t_y$$, $$t_z$$) 个单位。
+$$
+\left[
+\begin{matrix}
+1 & 0 & 0 & t_x \\
+0 & 1 & 0 & t_y \\
+0 & 0 & 1 & t_z \\
+0 & 0 & 0 & 1 \\
+\end{matrix}
+\right]
+
+\left[
+
+\begin{matrix}
+x \\
+y \\
+z \\
+1
+\end{matrix}
+\right]
+
+= 
+\left[
+\begin{matrix}
+x + t_x \\
+y + t_y \\
+z + t_z \\
+1
+\end{matrix}
+\right]
+$$
+
+
+为矢量(x,y,z)在空间做平移
+
+
+$$
+\left[
+\begin{matrix}
+1 & 0 & 0 & t_x \\
+0 & 1 & 0 & t_y \\
+0 & 0 & 1 & t_z \\
+0 & 0 & 0 & 1 \\
+\end{matrix}
+\right]
+
+\left[
+
+\begin{matrix}
+x \\
+y \\
+z \\
+0
+\end{matrix}
+\right]
+
+= 
+\left[
+\begin{matrix}
+x + t_x \\
+y + t_y \\
+z + t_z \\
+0
+\end{matrix}
+\right]
+$$
+
+>平移不会对方向矢量产生任何影响。
+>
+>平移矩阵的逆矩阵就是反向平移得到的矩阵。
+
+$$
+\left[
+\begin{matrix}
+1 & 0 & 0 & -t_x \\
+0 & 1 & 0 & -t_y \\
+0 & 0 & 1 & -t_z \\
+0 & 0 & 0 & 1 \\
+
+\end{matrix}
+\right]
+$$
+
+
+
+##### 放缩矩阵
+
+为一个模型验证x、y、z三个轴进行放缩。
+
+$$
+\left[
+\begin{matrix}
+k_x & 0 & 0 & 0 \\
+0 & k_y & 0 & 0 \\
+0 & 0 & k_z & 0 \\
+0 & 0 & 0 & 1 \\
+\end{matrix}
+\right]
+
+\left[
+\begin{matrix}
+x \\
+y \\
+z \\
+0
+\end{matrix}
+\right]
+
+= 
+\left[
+\begin{matrix}
+k_{x}x \\
+k_{y}y \\
+k_{z}z \\
+1 
+\end{matrix}
+\right]
+$$
+
+如果$$k_x​$$=$$k_y​$$=$$k_z​$$时候，称为 统一放缩。否则称为非统一放缩。
+
+
+
+##### 旋转矩阵
+
+绕x轴旋转旋转矩阵 :
+$$
+R_x(\theta)  =
+
+\left[
+\begin{matrix}
+1 & 0 & 0 & 0 \\
+0 & \cos\theta& -\sin\theta & 0 \\
+0 & \sin\theta & \cos\theta & 0 \\
+0 & 0 & 0 & 1 \\
+\end{matrix}
+\right]
+$$
+
+
+
+绕y轴旋转旋转矩阵 :
+$$
+R_x(\theta)  =
+\left[
+\begin{matrix}
+\cos\theta & 0 & \sin\theta & 0 \\
+0 & 1 & 0 & 0 \\
+-\sin\theta & 0 & \cos\theta & 0 \\
+0 & 0 & 0 & 1
+\end{matrix}
+\right]
+$$
+
+
+
+绕z轴旋转旋转矩阵 :
+$$
+R_x(\theta)  =
+
+\left[
+\begin{matrix}
+\cos\theta & -\sin\theta & 0 & 0 \\
+\sin\theta & \cos\theta & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 1 \\
+\end{matrix}
+\right]
+$$
+
+
+
+> 旋转矩阵的逆矩阵是旋转相反角度得到的变换矩阵。
+>
+> 旋转矩阵是正交矩阵。
+
+
+
+##### 复合变换
+
+
+
+变换过程：
+
+$$
+P_{new} = M_{translation}M_{rotation}M_{scal\theta}P_{old}
+$$
+
+
+>约定变换顺序:
+>
+>先放缩，再旋转，最后再平移。
+
+##### 法线变换
+
+用$$M_{A→B}$$来变换顶点。
+$$
+T_B \cdot N_B = (M_{A-B}T_A)\cdot(GN_A) = 0
+$$
+其中$$T_A$$、$$T_B$$分别表示坐标空间A下和坐标空间B下的切线方向。G为变换矩阵。
+$$
+G = (M^T_{A→B})^{-1} = (M^{-1}_{A→B})^{T}
+$$
+
+
+如果变换只包括旋转和统一缩放，而不包括非统一缩放。利用统一缩放系数k。
+$$
+(M^T_{A→B})^{-1} = \frac{1}{k} M_{A→B}
+$$
+
+
+
+
+
+
+### 坐标空间
+
+假设， 父空间P、子空间C。在父空间中，子空间的原点位置已经3个单位坐标轴。
+
+> 需求1：
+>
+> 把子坐标空间下表示的点或矢量$$A_c$$转换的父坐标空间下的表示$$A_p​$$。
+>
+> $$
+> A_p = M_{c→p}A_cw
+> $$
+>
+> 需求2：
+>
+> 把父坐标空间下表示的点和矢量$$B_p$$转换到子坐标空间下的表示$$B_c$$。
+> $$
+> B_c = M_{p→c}B_p
+> $$
+
+### 模型空间
+
+别称对象空间、局部空间。
+
+
+
+### 世界空间
+
+特殊的坐标系。
+
+> 顶点变换第一步:
+>
+> 模型变换（model transform）：
+>
+> 顶点坐标→模型空间坐标→世界空间坐标。
+
+
+
+### 观察空间
+
+又称摄像机空间。
+
+> 观察空间是三维空间。屏幕空间是二维的。从观察空间到屏幕空间的转换是要经过**投影**操作的。
+>
+> 顶点变换第二步:
+>
+> 观察变换（view transform）：
+>
+> 将顶点坐标从世界空间坐标变换到观察空间坐标。
+
+### 裁剪空间(clip space)
+
+又称齐次裁剪空间
+
+这个用于变换的矩阵叫做**裁剪矩阵（clip matrix）**，也称**投影矩阵（projection matrix）**。
+
+> 裁剪空间的目的是能够方便地对渲染图元进行裁剪：完全位于这块空间的图元将会保留，以外的将会被删除，而与这块空间边界相交的图元就会被裁剪。这些都由视锥体决定。
+
+
+
+#### 1.透视投影 (FOV)
+
+![1610416053816](.\Unity Note Graphic.assets\1610416053816.png)
+
+
+$$
+nearClipPlaneHeight = 2 \times Near \times  \tan \frac{FOV }{2}
+$$
+
+$$
+farClipPlaneHeight = 2 \times Far \times \tan \frac{FOV}{2}
+$$
+
+
+
+当前摄像机横纵比为Aspect。
+
+$$
+Aspect = \frac{nearClipPlaneWidth}{nearClipPlaneHeight}
+$$
+
+$$
+Aspect = \frac{farClipPlaneWidth}{farClipPlaneHeight}
+$$
+
+
+
+Unity坐标系下的投影矩阵。
+
+$$
+M_{frustum} = 
+\left[
+\begin{matrix}
+\frac{\cot\frac{FOV}{2}}{Aspect} & 0 & 0 & 0 \\
+0 & \cot\frac{FOV}{2} & 0 & 0 \\
+0 & 0 & -\frac{Far + Near}{Far - Near} & -\frac{2 \times Near\times Far}{Far - Near} \\
+0 & 0 & -1 & 0 \
+\end{matrix}
+\right]
+$$
+
+
+一个顶点和上述投影相乘。
+
+$$
+P_{clip} = M_{frustum}P_{view}=
+\left[
+\begin{matrix}
+\frac{\cot\frac{FOV}{2}}{Aspect} & 0 & 0 & 0 \\
+0 & \cot\frac{FOV}{2} & 0 & 0 \\
+0 & 0 & -\frac{Far + Near}{Far - Near} & -\frac{2 \times Near\times Far}{Far - Near} \\
+0 & 0 & -1 & 0 \
+\end{matrix}
+\right]
+\left[
+\begin{matrix}
+x \\
+y \\
+z \\
+1
+\end{matrix}
+\right]
+= 
+\left[
+\begin{matrix}
+x\frac{\cot\frac{FOV}{2}}{Aspect} \\
+y\cot\frac{FOV}{2} \\
+-z\frac{Far + Near}{Far - Near} - \frac{2 \times Near \times Far}{Far - Near} \\
+-z \\
+\end{matrix}
+\right]
+$$
+
+顶点的w分量不再是1。而是z分量取反的结果。顶点在视锥体内，那么它变换后的坐标满足：
+
+$$
+-w \leq x \leq w \\
+-w \leq y \leq w \\
+-w \leq z \leq w
+$$
+不满足上述条件的图元都需要被剔除或者裁剪。
+
+#### 2.正交投影
+
+![1610419377269](.\Unity Note Graphic.assets\1610419377269.png)
+
+
+$$
+nearClipPlaneHeight = 2 \cdot Size \\
+farClipPlaneHeight = nearClipPlaneHeight
+$$
+摄像机横纵比为Aspect。
+$$
+nearClipPlaneWidth = Aspect \cdot nearClipPlaneHeight
+$$
+
+
+Unity坐标系下的正交投影矩阵的裁剪矩阵：
+$$
+M_{ortho} = 
+\left[
+\begin{matrix}
+\frac{1}{Aspect \cdot Size} & 0 & 0 & 0 \\
+0 & \frac{1}{Size} & 0 & 0 \\
+0 & 0 & -\frac{2}{Far - Near} & -\frac{Far + Near}{Far - Near} \\
+0 & 0 & 0 & 1 \\
+\end{matrix}
+\right]
+$$
+顶点和投影矩阵相乘：
+$$
+P_{clip} =
+M_{ortho}P_{view} =
+\left[
+\begin{matrix}
+\frac{1}{Aspect \cdot Size} & 0 & 0 & 0 \\
+0 & \frac{1}{Size} & 0 & 0 \\
+0 & 0 & -\frac{2}{Far - Near} & -\frac{Far + Near}{Far - Near} \\
+0 & 0 & 0 & 1 \\
+\end{matrix}
+\right]
+
+\left[
+\begin{matrix}
+x \\
+y \\
+z \\
+1 \\
+\end{matrix}
+\right]
+=
+\left[
+\begin{matrix}
+\frac{x}{Aspect \cdot Size} \\
+\frac{y}{Size} \\
+-\frac{2z}{Far - Near} - \frac{Far + Near}{Far - Near} \\
+1 \\
+\end{matrix}
+\right]
+$$
+
+
+### 屏幕空间
+
+经过投影变换后，可以进行裁剪操作了。裁剪完成后，就需要把视锥体投影到屏幕空间。经过这一步会得到真正的像素位置。
+
+第一步是齐次除法，又称透视除法。
+
+> 这个步骤下，其实就是用齐次坐标系的w分量去除以x、y、z分量。在OpenGL中这一步得到的坐标称为**归一化的设备坐标**。
+>
+> 按照传统OpenGL下，x、y、z分量范围都是[-1 , 1]。但是，DirectX这样的API中，z分量的范围会是[0 , 1]。而Unity选择了OpenGL这样的齐次裁剪空间。
+
+![1610421611761](.\Unity Note Graphic.assets\1610421611761.png)
+
+![1610421793957](Unity Note Graphic.assets\1610421793957.png)
+
+
+
+在Unity中，屏幕空间左下角的像素坐标是(0,0),右上角是(pixelWidth , pixelHeight)。x、y坐标都是[-1, 1]。
+$$
+screen_x = \frac{clip_x \cdot pixelWidth}{2 \cdot clip_w} + \frac{pixelWidth}{2} \\
+screen_y = \frac{clip_y \cdot pixelHeight}{2 \cdot clip_w} + \frac{pixelHeight}{2} \\
+$$
+上面处理了x、y。z分量通常会用于**深度缓冲**。一个传统的方式是把$$\frac{clip_z}{clip_w}$$的值存进深度缓冲中。在Unity中，裁剪空间转换到屏幕空间是自动完成的。顶点着色器只需要把顶点转换到裁剪空间即可。
+
+
+
+### 顶点空间转换总结
+
+顶点着色器的最基本的任务就是把顶点坐标从模型空间转换到裁剪空间。而在片元着色器中，我们通常也可以得到片元在屏幕空间的像素坐标。
+
+![1610422805202](Unity Note Graphic.assets\1610422805202.png)
+
+Unity坐标系的旋向性会随着变换发生改变。![1610423019001](Unity Note Graphic.assets\1610423019001.png)
+
+### Unity Shader的内置变量
+
+#### 变换矩阵
+
+> 类型都是float4x4类型
+
+| 变量名             | 描述 |
+| ------------------ | ---- |
+| UNITY_MARTIX_MVP   |      |
+| UNITY_MARTIX_MV    |      |
+| UNITY_MARTIX_V     |      |
+| UNITY_MARTIX_P     |      |
+| UNITY_MARTIX_VP    |      |
+| UNITY_MARTIX_T_MV  |      |
+| UNITY_MARTIX_IT_MV |      |
+| _Object2World      |      |
+| _World2Object      |      |
+
+
+
+#### 摄像机和屏幕参数
+
+|                             | 类型     | 描述 |
+| --------------------------- | -------- | ---- |
+| _WorldSpaceCameraPos        | float3   |      |
+| _ProjectionParams           | float4   |      |
+| _ScreenParams               | float4   |      |
+| _ZBufferParams              | float4   |      |
+| unity_OrtoParams            | float4   |      |
+| unity_CameraProjection      | float4x4 |      |
+| unity_CameraInvProjection   | float4x4 |      |
+| unity_CameraWorldClipPlanes | float4   |      |
+
+
+
+#### CG中的矢量和矩阵类型
+
+在CG中，矩阵类型由float3x3、float4x4等关键字进行声明和定义的。对应float3、float4等类型的变量。可以当做个矢量，也可以当做矩阵。
+
+```
+float4 a = float4(1.0 , 2.0 , 3.0 , 4.0);
+float4 b = float4(1.0 , 2.0 , 3.0 , 4.0);
+// 点积时候当做矢量
+float result = dot(a , b);
+
+// float4类型当做矩阵
+float4 v = float4(1.0 , 2.0 , 3.0 , 4.0);
+float4x4 M = float4x4(1.0 , 2.0 , 3.0 , 4.0,
+					1.0 , 2.0 , 3.0 , 4.0,
+					1.0 , 2.0 , 3.0 , 4.0,
+					1.0 , 2.0 , 3.0 , 4.0);
+float4 column_mul_result = mul(M , v);
+float4 row_mul_result = mul(v , M);
+
+```
+
+
+
+#### Unity 中的屏幕坐标：ComputeSceenPos、VPOS、WPOS
+
+在顶点/片元着色器中，有两种方法获得片元的屏幕坐标。
+
+一种是在片元着色器的输入声明VPOS或者WPOS语义。VPOS是HLSL中对屏幕坐标的语义，WPOS是CG中对屏幕坐标的语义。两种在Unity Shader中是等价的。
+
+```
+fixed4 frag(float4 sp : VPOS) : SV_Target 
+{
+	// 屏幕坐标除以屏幕分辨率，得到视口空间坐标
+    return fixed4(sp.xy / _ScreenParams.xy , 0.0 , 1.0);
+}
+```
+
+VPOS、WPOS类型是float4。x、y值代表在屏幕空间的像素坐标。屏幕分辨率是400x300，那么x范围在[0.5 , 400.5] ，y的范围在[0.5 , 300.5]。Unity中z分量范围在[0 ,1]。z值为1，在摄像机的近裁剪平面处。z值0，在远裁剪面平面处。w分量，对于透视投影。w范围是$$\left[ \frac{1}{Near} , \frac{1}{Far}\right]$$。如果是正交投影，那么w的值为1。
+
+
+
+另外一种方式是通过ComputeScreenPos函数。
+
+```
+struct vertOut {
+    float4 pos : SV_POSITION;
+    float4 scrPos : TEXCOORD0;
+};
+
+vertOut vert(appdata_base v){
+    vertOut o;
+    o.pos = mul(UNITY_MATRIX_MVP , v.vertex);
+    // 
+    o.scrPos = ComputeScreenPos(o.pos);
+    return 0;
+}
+
+fixed4 frag(verOut i) : SV_Target {
+    float2 wcoord = (i.scrPos.xy / i.scrPos.w);
+    return fixed4(wcoord , 0.0 , 1.0);
+}
+```
+
+公式思想：
+
+$$
+viewport_x =  \frac{clip_x}{2 \cdot clip_w} + \frac{1}{2} \\
+viewport_y =  \frac{clip_y}{2 \cdot clip_w} + \frac{1}{2} \\
+$$
+
+
+UnityCG.cgine文件中
+
+```
+inline float4 ComputeNonStereoScreenPos(float4 pos) {
+    float4 o = pos * 0.5f;
+    o.xy = float2(o.x, o.y*_ProjectionParams.x) + o.w;
+    o.zw = pos.zw;
+    return o;
+}
+
+inline float4 ComputeScreenPos(float4 pos) {
+    float4 o = ComputeNonStereoScreenPos(pos);
+#if defined(UNITY_SINGLE_PASS_STEREO)
+    o.xy = TransformStereoScreenSpaceTex(o.xy, pos.w);
+#endif
+    return o;
+}
+```
+
+
+
+## Unity Shader
+
+
+
+### 简单的顶点/片元着色器
+
+```
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "USB/Ch.5/simple_vf_shader"
+{
+    SubShader
+    {
+        Pass
+        {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+
+            float4 vert (float4 v : POSITION) : SV_POSITION
+            {
+                return UnityObjectToClipPos(v);
+            }
+
+            fixed4 frag () : SV_Target
+            {
+                return fixed4(1.0 , 1.0, 1.0, 1.0);
+            }
+            ENDCG
+        }
+    }
+}
+```
+
+
+
+
+
+> #pragma vertex **functionName**
+> #pragma fragment **functionName**
+
+上面两个函数
+
+vert函数
+
+```
+float4 vert (float4 v : POSITION) : SV_POSITION
+{
+	return UnityObjectToClipPos(v);
+}
+```
+
+frag函数
+
+```
+fixed4 frag () : SV_Target
+{
+	return fixed4(1.0 , 1.0, 1.0, 1.0);
+}
+```
+
+
+
+#### 模型数据获取
+
+顶点着色器中使用POSITION语义得到模型的顶点位置。获取多个模型数据时候。
+
+```
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "UnityShaderBook/Ch.5/simple_vf_shader"
+{
+    SubShader
+    {
+        // Tags { "RenderType"="Opaque" }
+        // LOD 100
+
+        Pass
+        {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+
+            struct a2v
+            {
+                // POSITION语义告诉Unity，用模型空间的顶点填充该变量
+                float4 vertex : POSITION;
+                // NORMAL语义告诉Unity，用模型空间的法线方向填充该变量
+                float4 normal : NORMAL;
+                // TEXCOORD语义告诉Unity，用模型空间的第一套纹理坐标变量
+                float4 texcoord : TEXCOORD;
+            };
+
+            float4 vert (a2v v) : SV_POSITION
+            {
+                return UnityObjectToClipPos(v.vertex);
+            }
+
+            fixed4 frag () : SV_Target
+            {
+                return fixed4(1.0 , 1.0, 1.0, 1.0);
+            }
+            ENDCG
+        }
+    }
+}
+
+```
+
+创建一个自定义的结构体:
+
+```
+struct StructName 
+{
+    Type Name : Semantic;
+    Type Name : Semantic;
+    ... ...
+};
+```
+
+
+
+Unity中，填充到POSITION、TANGENT、NORMAL这些语义中的数据，来源于该材质的Mesh Render组件提供。在每帧DrawCall时候，MeshRender组件会负责发送数据给Unity Shader。一个模型通常包含一组三角面片，每个面片由3个顶点构成，每个顶点又包含一些数据，如顶点位置、法线、切线、纹理坐标、顶点颜色等。
+
+
+
+#### 顶点着色器和片元着色器之间如何通信
+
+
+
+```
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "UnityShaderBook/Ch.5/simple_vf_shader"
+{
+    SubShader
+    {
+        // Tags { "RenderType"="Opaque" }
+        // LOD 100
+
+        Pass
+        {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+
+            struct a2v
+            {
+                // POSITION语义告诉Unity，用模型空间的顶点填充该变量
+                float4 vertex : POSITION;
+                // NORMAL语义告诉Unity，用模型空间的法线方向填充该变量
+                float4 normal : NORMAL;
+                // TEXCOORD语义告诉Unity，用模型空间的第一套纹理坐标变量
+                float4 texcoord : TEXCOORD;
+            };
+
+            struct v2f
+            {
+                // SV_POSITION语义告诉Unity,pos里面包含了顶点在裁剪空间中的位置信息
+                float4 pos : SV_POSITION;
+                // COLOR0 语义可以用于存储颜色信息
+                fixed3 color : COLOR0;
+            };
+
+            v2f vert (a2v v)
+            {
+                // 声明结构
+                v2f o;
+                
+                o.pos = UnityObjectToClipPos( v.vertex);
+                // v.normal包含法线方向，分量范围为[-1 , 1]
+                o.color = v.normal * 0.5 + fixed3(0.5 , 0.5 , 0.5);
+
+                return o;
+            }
+
+            fixed4 frag (v2f i) : SV_Target
+            {
+                // 将插值后的i.color显示到屏幕上
+                return fixed4(i.color , 1.0);
+            }
+            ENDCG
+        }
+    }
+}
+```
+
+
+
+新建了个结构体用于顶点着色器和片元着色器中进行传递数据。
+
+```
+struct v2f
+{
+	// SV_POSITION语义告诉Unity,pos里面包含了顶点在裁剪空间中的位置信息
+	float4 pos : SV_POSITION;
+	// COLOR0 语义可以用于存储颜色信息
+	fixed3 color : COLOR0;
+};
+```
+
+> 注意：顶点着色器是逐顶点调用的，而片元着色器是逐片元调用的。片元着色器中输入实际上是把顶点着色器的输出进行插值后得到的结果。
+
+#### 如何使用属性
+
+
+
+```
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "UnityShaderBook/Ch.5/simple_vf_shader"
+{
+    Properties
+    {
+        // 声明一个Color类型的属性
+        _Color ("Color Tint" , Color) = (1,1,1,1)
+    }
+    SubShader
+    {
+        Pass
+        {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+
+            // 在CG代码中，需要定义一个与属性名称类型都匹配的变量
+            fixed4 _Color;
+
+            struct a2v
+            {
+                // POSITION语义告诉Unity，用模型空间的顶点填充该变量
+                float4 vertex : POSITION;
+                // NORMAL语义告诉Unity，用模型空间的法线方向填充该变量
+                float4 normal : NORMAL;
+                // TEXCOORD语义告诉Unity，用模型空间的第一套纹理坐标变量
+                float4 texcoord : TEXCOORD;
+            };
+
+            struct v2f
+            {
+                // SV_POSITION语义告诉Unity,pos里面包含了顶点在裁剪空间中的位置信息
+                float4 pos : SV_POSITION;
+                // COLOR0 语义可以用于存储颜色信息
+                fixed3 color : COLOR0;
+            };
+
+            v2f vert (a2v v)
+            {
+                // 声明结构
+                v2f o;
+                
+                o.pos = UnityObjectToClipPos( v.vertex);
+                // v.normal包含法线方向，分量范围为[-1 , 1]
+                o.color = v.normal * 0.5 + fixed3(0.5 , 0.5 , 0.5);
+
+                return o;
+            }
+
+            fixed4 frag (v2f i) : SV_Target
+            {
+                fixed3 new_color = i.color;
+                // 使用_Color属性来控制输出颜色
+                new_color *= _Color.rgb;
+                
+                return fixed4(new_color , 1.0);
+            }
+            ENDCG
+        }
+    }
+}
+```
+
+
+
+ShaderLab属性类型和CG变量类型匹配关系：
+
+| ShaderLab变量类型 |     CG变量类型      |
+| :---------------: | :-----------------: |
+|   Color, Vector   | float4,half4,fixed4 |
+|   Range , Float   |  float,half,fixed   |
+|        2D         |      sample2D       |
+|       Cube        |     samplerCube     |
+|        3D         |      sampler3D      |
+
+> 有时候会在CG变量前会有uniform关键字
+>
+> uniform fexed4 _Color;
+>
+> uniform关键字是CG中修饰变量和参数的一种修饰词，它仅用于提供一些该变量的初始值是如何制定和存储的相关信息。在UnityShader中可忽略。
+
+
+
+#### Unity中内置文件和变量
+
+```
+CGPROGRAM
+// ...
+#include "UnityCG.cginc"
+// ...
+ENDCG
+```
+
+CGIncludes中主要的包含文件以及它们主要作用。
+
+| 文件名                     | 描述                                                         |
+| -------------------------- | ------------------------------------------------------------ |
+| UnityCG.cginc              | 包含了最常使用的帮助函数、宏和结构体等                       |
+| UnityShaderVariables.cginc | 在编译Unity Shader时，会被自动包含进来，包含了许多内置的全局变量，如UNITY_MATRIX_MVP等 |
+| Lighting.cginc             | 包含了各种内置光照模型，如果编写的是Surface Shader的话，会自动包含进来 |
+| HLSLSupport.cginc          | 在编译Unity Shader时，会被自动包含进来。声明了很多用于跨平台编译的宏和定义。 |
+
+UnityCG.cginc中，常用的结构体。
+
+| 名称         | 描述                   | 包含变量                                             |
+| ------------ | ---------------------- | ---------------------------------------------------- |
+| appdata_base | 可用于顶点着色器的输入 | 顶点变量、顶点法线、第一组纹理坐标                   |
+| appdata_tan  | 可用于顶点着色器的输入 | 顶点位置、顶点切线、顶点法线、第一组纹理坐标         |
+| appdata_full | 可用于顶点着色器的输入 | 顶点位置、顶点切线、顶点法线、四组（或更多）纹理坐标 |
+| appdata_img  | 可用于顶点着色器的输入 | 顶点位置、第一组纹理坐标                             |
+| v2f_img      | 可用于顶点着色器的输出 | 裁剪空间中的位置、纹理坐标                           |
+
+UnityCG.cginc中，常用的帮助函数。
+
+| 函数名                                       | 描述                                                         |
+| -------------------------------------------- | ------------------------------------------------------------ |
+| float3 WorldSpaceViewDir(float4 v)           | 输入一个模型空间中的顶点位置，返回世界空间中从该点到摄像机观察方向 |
+| float3 ObjSpaceViewDir(float4 v)             | 输入一个模型空间中的顶点位置，返回模型空间中从该点到摄像机观察方向 |
+| float3 WorldSpaceLightDir(float4 v)          | **仅用于前向渲染**。输入一个模型空间中的顶点位置，返回世界空间中从该点到光源光照方向。没有被归一化。 |
+| float3 ObjSpaceLightDir(float4 v)            | **仅用于前向渲染**。输入一个模型空间中的顶点位置，返回模型空间中从该点到光源的光照方向。没有被归一化。 |
+| float3 UnityObjectToWorldNormal(float3 norm) | 把法线方向从模型空间转换到世界空间中                         |
+| float3 UnityObjectToWorldDir(in float3 dir)  | 把方向矢量从模型空间转换到世界空间中                         |
+| float3 UnityWorldToObjectDir(float3 dir)     | 把方向矢量从世界空间转换到模型空间中                         |
+
+
+
+#### Unity CG/HLSL语义
+
+
+
+![1610527080555](Unity Note Graphic.assets\1610527080555.png)
+
+![1610527129946](Unity Note Graphic.assets\1610527129946.png)
+
+
+
+#### Unity支持的语义
+
+从应用阶段传递给顶点着色器时Unity支持的常用语义
+
+| 语义                                | 描述                                                         |
+| ----------------------------------- | ------------------------------------------------------------ |
+| POSITION                            | 模型空间中的顶点位置，通常是float4类型                       |
+| NORMAL                              | 顶点法线，通常是float3类型                                   |
+| TANGENT                             | 顶点切线，通常是float4类型                                   |
+| TEXCOORDn（如TEXCOORD0、TEXCOORD1） | 该顶点的纹理坐标，TEXCOORD0 表示第一组纹理坐标。以此类推。通常是float2或者float4类型 |
+| COLOR                               | 顶点颜色，通常是float4或者fixed4类型                         |
+
+
+
+从顶点着色器传递数据给片元着色器时Unity使用的常用语义
+
+| 语义                  | 描述                                                         |
+| --------------------- | ------------------------------------------------------------ |
+| SV_POSITION           | 裁剪空间中顶点坐标,结构体中必须包含一个用该语义修饰变量。等同于DirectX9中的POSITION。最好使用SV_POSITION |
+| COLOR0                | 通常用于输出第一组顶点颜色，但不是必需的                     |
+| COLOR1                | 通常用于输出第二组顶点颜色，但不是必需的                     |
+| TEXTCOOR0 ~ TEXTCOOR1 | 通常用于输出纹理坐标，但不是必需的                           |
+
+
+
+片元着色器输出时Unity支持的常用语义
+
+| 语义      | 描述                                                         |
+| --------- | ------------------------------------------------------------ |
+| SV_Target | 输出值将会存储到渲染目标（render target）中，等同于DirectX9中的COLOR语义，最好使用SV_Target |
 
 
 
