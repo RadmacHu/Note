@@ -791,7 +791,7 @@ Unity坐标系的旋向性会随着变换发生改变。![1610423019001](Unity N
 | _ScreenParams               | float4   |      |
 | _ZBufferParams              | float4   |      |
 | unity_OrtoParams            | float4   |      |
-| unity_CameraProjection      | float4x4 |      |
+| unity_CameraProjection对应  | float4x4 |      |
 | unity_CameraInvProjection   | float4x4 |      |
 | unity_CameraWorldClipPlanes | float4   |      |
 
@@ -1269,4 +1269,248 @@ UnityCG.cginc中，常用的帮助函数。
 | SV_Target | 输出值将会存储到渲染目标（render target）中，等同于DirectX9中的COLOR语义，最好使用SV_Target |
 
 
+
+#### 渲染平台差异
+
+Unity的优点之一是其跨平台性。Unity为我们隐藏了这些细节，但是有时候我们需要自己处理平台之间的差异。
+
+##### 渲染纹理的坐标差异
+
+![1610592916931](Unity Note Graphic.assets\1610592916931.png)
+
+略 - 具体P115-P116
+
+
+
+##### Shader语法、语义差异
+
+略
+
+
+
+#### Unity Shader建议
+
+##### float、half、fixed
+
+CG/HLSL中3种精度的数值类型
+
+| 类型  | 精度                                                         |
+| ----- | ------------------------------------------------------------ |
+| float | 最高精度的浮点值，通常使用32位存储                           |
+| half  | 中等精度的浮点数，通常使用16位存储，精度范围 -60,000 ~ +60,000 |
+| fixed | 最低精度的浮点数，通常使用11位存储，精度范围 -2.0 ~ +2.0     |
+
+> 精度上，不同平台会有所不同。
+
+![1610595988937](Unity Note Graphic.assets\1610595988937.png)
+
+##### 规范语法
+
+使用和变量类型相匹配的参数数目来进行变量进行初始化。
+
+##### 避免不必要的计算
+
+![1610596747056](Unity Note Graphic.assets\1610596747056.png)
+
+##### 慎用分支和循环语句
+
+如果在Shader中使用了大量的流程控制语句，那么这个Shader的性能可能会成倍下降。一个解决方法是，尽量把
+
+往流水线的上方或者CPU上放。例如吧放在片元着色器中的计算放到顶点着色器中，或者直接在CPU中进行预计算，在把结果传递给Shader。
+
++ 分支判断语句中使用的条件变量最好是常数。（在Shader运行过程中不会发生变化）
++ 每个分支中包含的操作指令尽量少
++ 分支嵌套数尽量少
+
+##### 不要除以零
+
+> Shader编写时候会忽略这个问题
+
+```
+fixed4 frag(v2f i) : SV_Target
+{
+    return fixed4(0.0 / 0.0 , 0.0 / 0.0 , 0.0 / 0.0 , 1.0);
+}
+```
+
+
+
+### Unity中的基础光照
+
+通常来说，我们要模拟真实的光照环境来生成一张图像，需要考虑3种物理现象：
+
++ 首先，光线从光源中发射出来
++ 光线和场景中的一些物体相交：一些光线被物体吸收，一些光线被散射到其他方向
++ 最后，摄像机吸收了一些光，产生了一张图像。
+
+#### 光源
+
+![1610606219150](Unity Note Graphic.assets\1610606219150.png)
+
+#### 吸收和散射
+
+> 光线由光源发射出来后，会与物体相交。相交结果有两种： 散射和吸收
+
+散射只改变光线方向，但不改变光线的密度和颜色。
+
+吸收只改变光线的密度和颜色，但是不改变光线方向。
+
+
+
+光线在表面经过散射后，有两种方向：
+
++ 散射到物体内部，称折射|透射
++ 散射到物体外部，称为反射
+
+> 对于不透明的东西，折射还会和那边的颗粒进行交互。
+
+![1610606685682](Unity Note Graphic.assets\1610606685682.png)
+
+为了区分两种不同的散射方向，光照模型中使用了不同的部分来计算。
+
+> 高光反射 ：表示物体表面是如何反射光线
+>
+> 漫反射：表示有多少光线会被折射、吸收和散射出表面。
+
+ 根据入射光线的数量和方向，我们可以计算出射出光线的数量和方向。我们通常使用**出射度**来描述它。辐射度和出射度满足线性关系。而它们之间的比值就是材质的漫反射和高光反射属性。
+
+#### 着色
+
+着色指的是，根据材质属性、光照信息，使用一个等式去计算沿某个方向的观察方向的出射度的过程。这个等式称为光照模型。不同光照模型有不同的目的。
+
+
+
+### 标准光照模型
+
+把进入摄像机内的光线分为4部分。
+
+> 自发光 ：用于描述当给定一个方向时，一个表面本身会向该方向发射多少辐射量。需要注意的是，如果没有全局光照技术，这些自发光的表面并不会真的照亮周围的物体，而是它本身看起来更亮了。
+>
+> 高光反射 ：用于描述当光线总光源照射到模型表面时，该表面会在完全镜面反射方向散射多少辐射量。
+>
+> 漫反射 ：用于描述当光线从光源照射到模型表面时，该表面会向每个方向散射多少辐射量。
+>
+> 环境光 ：用于描述其他所有的间接光照。
+
+环境光：
+
+光照模型重点在于直接光照，但是物体也是受间接光照影响。间接光照通常是指多个物体之间反射，最后进入摄像机。
+
+
+
+漫反射：
+
+漫反射光照是用于对那些被物体表面随机散射到各个方向的辐射度进行建模的。在漫反射中，视角的位置是不重要的，因为反射是完全随机的。但是，入射光线很重要。
+
+漫反射符合兰伯特定律（Lambert's law）：反射光线的强度与表面法线和光源方向之间夹角的余弦值成正比。公式如下：
+$$
+C_{diffuse} = (C_{light} \cdot m_{diffuse})max(0 , n \cdot I)
+$$
+其中，n是表面法线，I是指向光源的单位矢量，$$m_{diffuse}$$是材质的漫反射颜色。$$c_{light}​$$是光源颜色。
+
+> 为了防止法线和光源方向点乘的结果为负值，为此取最大值截取到0。
+
+高光反射
+
+需要知道表面法线、视角方向、光源方向、反射方向等。
+$$
+r = 2 (\widehat{n} \cdot I)\widehat{n} - I
+$$
+利用Phong模型来计算高光。
+$$
+C_{specular} = (C_{light} \cdot m_{specular})max(0,\widehat{v} \cdot r)^{m_{gloss}};
+$$
+$$m_{gloss}$$为光泽度。用于控制高光区域的“亮点”有多宽。$$m_{specular}$$是材质高光反射的颜色，用于控制高光反射强度和颜色。$$C_{light}$$则是光源颜色和强度。$$\widehat{v} \cdot \widehat{r}$$的结果为负数。
+
+![1610614942318](Unity Note Graphic.assets\1610614942318.png)
+
+
+
+#### 逐像素还是逐顶点
+
++ 在片元着色器中计算 ------ 逐像素光照
++ 在顶点着色器中计算 ------ 逐顶点光照
+
+![1610615710869](Unity Note Graphic.assets\1610615710869.png)
+
+
+
+### Unity的环境光和自发光
+
+![1610616287421](Unity Note Graphic.assets\1610616287421.png)
+
+
+
+### UnityShader 中实现漫反射光照模型
+
+漫反射计算公式：
+$$
+C_{diffuse} = (C_{light} \cdot m_{diffuse})max(0 , n \cdot I)
+$$
+
+
+```
+// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
+
+Shader "UnityShaderBook/Ch.6/ch_6_diffuse_vertex_shader"
+{
+    Properties
+    {
+        _Diffuse("Diffuse" , Color) = (1.0 , 1.0, 1.0,1.0)
+    }
+    SubShader
+    {
+        Pass
+        {
+            Tags { "LightMode" = "ForwardBase"}
+
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+
+            #include "Lighting.cginc"
+
+            fixed4 _Diffuse;
+
+            struct appdata
+            {
+                float4 vertex : POSITION;
+                float3 normal : NORMAL;
+            };
+
+            struct v2f
+            {
+                float4 vertex : SV_POSITION;
+                float3 color :COLOR;
+            };
+
+
+            v2f vert (appdata v)
+            {
+                v2f o;
+                o.vertex = UnityObjectToClipPos(v.vertex);
+
+                // 获取环境光部分
+                fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT;
+                // 将从模型空间转换世界空间
+                fixed3 worldNormal = normalize(mul(v.normal  , (float3x3)unity_WorldToObject));
+                // 光源方向 （世界空间）
+                fixed3 worldLight = normalize(_WorldSpaceLightPos0.xyz);
+                // 漫反射计算
+                fixed3 diffuse = _LightColor0.rgb * _Diffuse.rgb * saturate(dot(worldNormal , worldLight));
+                o.color = ambient + diffuse;
+
+                return o;
+            }
+
+            fixed4 frag (v2f i) : SV_Target
+            {
+                return fixed4(i.color , 1.0);
+            }
+            ENDCG
+        }
+    }
+    Fallback "Diffuse"
+}
+```
 
