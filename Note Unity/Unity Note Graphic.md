@@ -1514,3 +1514,218 @@ Shader "UnityShaderBook/Ch.6/ch_6_diffuse_vertex_shader"
 }
 ```
 
+
+
+逐像素光照
+
+```
+// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
+
+Shader "UnityShaderBook/Ch.6/ch_6_diffuse_fragment_shader"
+{
+    Properties
+    {
+        _Diffuse("Diffuse" , Color) = (1.0 , 1.0, 1.0,1.0)
+    }
+    SubShader
+    {
+        Pass
+        {
+            Tags { "LightMode" = "ForwardBase"}
+
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+
+            #include "Lighting.cginc"
+
+            fixed4 _Diffuse;
+
+            struct appdata
+            {
+                float4 vertex : POSITION;
+                float3 normal : NORMAL;
+            };
+
+            struct v2f
+            {
+                float4 vertex : SV_POSITION;
+                float3 worldNormal : TEXCOORD0;
+            };
+
+
+            v2f vert (appdata v)
+            {
+                v2f o;
+                o.vertex = UnityObjectToClipPos(v.vertex);
+
+                o.worldNormal = normalize(mul(v.normal  , (float3x3)unity_WorldToObject));
+
+                return o;
+            }
+
+            fixed4 frag (v2f i) : SV_Target
+            {
+                // 获取光照
+                fixed3 ambient = UNITY_LIGHT_AMBIENT.xyz;
+
+                fixed3 worldNormal = normalize(i.worldNormal);
+
+                fixed3 worldLightDir = normalize(_WorldSpaceLightPos0.xyz);;
+
+                fixed3 diffuse = _LightColor0.rgb * _Diffuse.rgb * (dot(worldNormal , worldNormal));
+
+                fixed3 color = ambient + diffuse;
+
+                return fixed4(i.color , 1.0);
+            }
+            ENDCG
+        }
+    }
+    Fallback "Diffuse"
+}
+```
+
+### 半兰伯特模型
+
+广义的半兰伯特模型：
+$$
+C_{diffuse} = (C_{light} \cdot m_{diffuse})(\alpha (\widehat{n} \cdot I) + \beta)
+$$
+相比原兰伯特模型，半兰伯特模型没有使用max操作防止$$\widehat{n}$$和$$I$$的点积为负值。而是对结果加上了一个$$\alpha$$放缩再加上一个$$\beta$$大小的偏移值。绝大多数情况下，$$\alpha$$和$$\beta$$值为0.5。
+$$
+C_{diffuse} = (C_{light} \cdot m_{diffuse})(0.5 (\widehat{n} \cdot I) + 0.5)
+$$
+可以把$$\widehat{n} \cdot I ​$$的结果范围从[-1 , 1]映射到 [0 , 1]范围。
+
+> 半兰伯特是不具有物理依据的，仅仅在视觉上加强。
+
+
+
+### Unity中实现高光反射光照模型
+
+$$
+C_{specular} = (C_{light} \cdot m_{specular})max(0 , \widehat{v} \cdot r)^{m_{gloss}}
+$$
+
+计算高光反射需要4个参数：
+
++ 入射光线颜色
++ 强度$$c_{light}$$
++ 材质的高光反射系数$$m_{specular}​$$
++ 视角方向$$\widehat{v}​$$以及反射方向$$r​$$。
+
+反射方向r可以计算得:
+$$
+r = 2 (\widehat{n} \cdot \widehat{I})\widehat{n} - \widehat{I}
+$$
+![1610695422411](Unity Note Graphic.assets\1610695422411.png)
+
+
+
+### Blinn-Phong光照模型
+
+Blinn光照模型。
+$$
+\widehat{h} = \frac{\widehat{v} +  \widehat{I}}{|\widehat{v} +  \widehat{I}|}
+$$
+BIinn模型计算高光反射的公式：
+$$
+C_{specular} = (C_{light} \cdot m_{specular})max(0 , \widehat{n} \cdot \widehat{h})^{m_{glow}}
+$$
+
+
+
+UnityCG.cginc中，常用的帮助函数。
+
+![1610768895739](Unity Note Graphic.assets\1610768895739.png)
+
+而计算光源方向3个函数：WorldSpaceLightDir、UnityWorldSpaceLightDir、ObjSpaceLightDir。（三个函数只能前向渲染用）
+
+
+
+### 基础纹理
+
+纹理展开通过纹理映射技术存储在每个顶点上。纹理映射坐标定义了该顶点的2D坐标。但顶底UV坐标的范围通常都被归一化[0,1]纹理采样时候使用的纹理坐标不一定是在[0,1]。实际上，这种不在[0,1]范围内的纹理坐标有时会很有用。
+
+
+
+
+
+### 单张纹理
+
+```
+Properties {
+		_MainTex ("Main Tex", 2D) = "white" {}
+	}
+	
+CGPROGRAM
+...
+sampler2D _MainTex;
+float4 _MainTex_ST;
+...
+ENDCG
+```
+
+纹理类型需要声明一个float4。在Unity中，我们需要使用**纹理名_ST**的方式来声明。ST是缩放和平移。_MainTex_ST.xy 存储的是缩放值，而  _Main_ST.zw 存储的是偏移值。
+
+
+
+```
+struct a2v {
+    float4 vertex : POSITION;
+    float3 normal : NORMAL;
+    float4 texcoord : TEXCOORD0;
+};
+
+struct v2f {
+    float4 pos : SV_POSITION;
+    float3 worldNormal : TEXCOORD0;
+    float3 worldPos : TEXCOORD1;
+    float2 uv : TEXCOORD2;
+};
+```
+
+顶点着色器里面：
+
+```
+v2f vert(a2v v) 
+{
+    v2f o;
+
+    ...
+
+    o.uv = v.texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+    
+    return o;
+}
+```
+
+使用_MainTex_ST中的属性，进行对贴图放缩和偏移。Unity中提供内置宏TRANSFORM_TEX来帮计算上述过程。
+
+> #define TRANSFORM_TEX(tex , name) (tex.xy * name##_ST.xy + name##_ST.zw)
+
+```
+fixed4 frag(v2f i) : SV_Target {
+        fixed3 worldNormal = normalize(i.worldNormal);
+        
+        fixed3 worldLightDir = normalize(UnityWorldSpaceLightDir(i.worldPos));
+		
+        // Use the texture to sample the diffuse color
+        // 纹理采样 和 环境光 乘积作为材质反射率
+        // tex2D(_MainTex, i.uv) 参数1采样的纹理 参数2纹理的坐标
+        // 返回的是纹素值
+        fixed3 albedo = tex2D(_MainTex, i.uv).rgb * _Color.rgb;
+		// 相乘获取环境光部分。
+        fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;
+		
+        fixed3 diffuse = _LightColor0.rgb * albedo * max(0, dot(worldNormal, worldLightDir));
+
+        fixed3 viewDir = normalize(UnityWorldSpaceViewDir(i.worldPos));
+        fixed3 halfDir = normalize(worldLightDir + viewDir);
+        fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(max(0, dot(worldNormal, halfDir)), _Gloss);
+				
+		return fixed4(ambient + diffuse + specular, 1.0);
+}
+```
+
