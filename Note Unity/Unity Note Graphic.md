@@ -305,9 +305,9 @@ $$
 $$
 
 
-> $$ M_{3\times3}​$$用于表示放缩和旋转。
-> $$t_{3\times1}​$$用于表示平移。
-> $$0_{1\times3}​$$是零矩阵。
+> $$ M_{3\times3}$$用于表示放缩和旋转。
+> $$t_{3\times1}$$用于表示平移。
+> $$0_{1\times3}$$是零矩阵。
 
 
 
@@ -1613,7 +1613,7 @@ $$
 + 入射光线颜色
 + 强度$$c_{light}$$
 + 材质的高光反射系数$$m_{specular}​$$
-+ 视角方向$$\widehat{v}​$$以及反射方向$$r​$$。
++ 视角方向$$\widehat{v}$$以及反射方向$$r$$。
 
 反射方向r可以计算得:
 $$
@@ -1707,25 +1707,110 @@ v2f vert(a2v v)
 
 ```
 fixed4 frag(v2f i) : SV_Target {
+		// 顶点法线
         fixed3 worldNormal = normalize(i.worldNormal);
-        
+        // 顶点到光源的方向
         fixed3 worldLightDir = normalize(UnityWorldSpaceLightDir(i.worldPos));
-		
-        // Use the texture to sample the diffuse color
         // 纹理采样 和 环境光 乘积作为材质反射率
         // tex2D(_MainTex, i.uv) 参数1采样的纹理 参数2纹理的坐标
         // 返回的是纹素值
         fixed3 albedo = tex2D(_MainTex, i.uv).rgb * _Color.rgb;
 		// 相乘获取环境光部分。
         fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;
-		
+		// 漫反射部分计算
         fixed3 diffuse = _LightColor0.rgb * albedo * max(0, dot(worldNormal, worldLightDir));
-
+		//输入世界空间中的顶点坐标，返回世界空间中从该点到摄像机的观察方向
         fixed3 viewDir = normalize(UnityWorldSpaceViewDir(i.worldPos));
+        // 两个中间方向
         fixed3 halfDir = normalize(worldLightDir + viewDir);
+        // 高光反射计算
         fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(max(0, dot(worldNormal, halfDir)), _Gloss);
-				
+		
 		return fixed4(ambient + diffuse + specular, 1.0);
 }
 ```
+
+
+
+### 纹理属性
+
+纹理映射简单描述是声明一个纹理变量，再使用tex2D函数进行采样。实际过程比这复杂多了。
+
+![1610955421731](Unity Note Graphic.assets\1610955421731.png)
+
+Wrap Mode 属性
+
+> 决定了当纹理坐标超过[0,1]范围后将会如何被平铺。
+
++ Repeat：这种模式下会超过1，那么它的整数部分会被社区，而直接使用小数部分进行采样。这样结果就是纹理将会不断地重复。
++ Clamp ：如果纹理坐标大于1，那么将会截取到1，如果小于0那么将会截取到0。
+
+
+
+对顶点纹理坐标进行相应的变换：
+
+```
+o.uv = v.texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+// 直接调用 TRANSFORM_TEX
+o.uv = TRANSFORM_TEX(v.texcoord , _MainTex);
+```
+
+
+
+Filter Mode 属性
+
+> 决定了当纹理由于变换而产生的拉伸时将会采用哪种滤波效果
+
++ Point
++ Bilinear
++ Trilinear
+
+它们得到滤波的效果依次提升，需要消耗的性能也越大。纹理滤波会影响放大和缩小纹理时得到的图片质量。
+
+
+
+纹理缩小的过程更加复杂的原因在于我们往往需要处理坑锯齿问题。
+
+最常用的是使用多级渐远纹理（mipmapping）技术。mipmapping技术将原纹理提前用滤波处理来得到很多更小的图像，形成一个小空间的金字塔，每一层都是对上一层图像降采样的结果。这样实时运行时候，就可以快速得到结果像素。 通常会多占用33%的内存空间（用于保存这些多级渐远纹理）
+
+> 内部实现上，Point模式使用了**最邻近**滤波，在放大或者缩小时，它的采样通常只有一个，因此图像会看起来有种像素风格的效果。
+>
+> Bilinear滤波使用了线性滤波，对于每个目标像素，它会找到4个临近像素，然后它们进行线性插值混合后得到最终图像。
+>
+> Trilinear会在多级渐远纹理之间进行混合。如果一张纹理或者没有使用Mipmapping技术，那么就和Bilinear一样。
+
+
+
+Format决定了Unity内部使用哪种格式进行存储该纹理。纹理格式精度越高，占用内存越大，效果也越好。（当游戏大量使用Truecolor类型的纹理时，内存可能会迅速增加。）
+
+### 凹凸映射
+
+纹理的另一种常见的应用，凹凸映射(bump mapping)。凹凸映射的目的是使用一张纹理来修改模型表面的法线，以便为模型提供更多细节。**这种方法不好真的改变模型的顶点位置，只是让模型看起来好像凹凸不平。**
+
+凹凸映射主要是两种：
+
++ 高度映射：使用高度纹理，模拟表面位移。
++ 法线映射：使用法线纹理，直接存储表面法线。
+
+
+
+#### 高度纹理
+
+高度图中存储强度值，用于表示模型表面局部的海拔高度。颜色越深越凹，颜色越浅越凸。这种方式好处是直观，坏处是计算复杂了。在实时计算时候，不能直接得到表面法线，需要经过由像素组成的灰度图。
+
+
+
+#### 法线纹理
+
+法线纹理中存储的就是表面的法线方向。由于法线方向是[-1 , 1]，而像素的分量范围为[0,1]。
+$$
+pixel = \frac{normal + 1}{2}
+$$
+我们在Shader中对法线纹理进行纹理采样后，需要对结果进行反映射的过程。反映射的过程实际就是逆函数：
+$$
+normal = pixel \times 2 - 1
+$$
+对于模型顶点自带法线，它们是定义在模型空间中的。修改后模型空间中的表面法线存储在一张纹理中，这种纹理称为**模型空间的法线纹理**。然而在制作中，往往会采用模型顶点的**切线空间**来存储法线。
+
+
 
